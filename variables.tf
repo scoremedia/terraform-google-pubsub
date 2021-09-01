@@ -59,3 +59,9 @@ variable "topic_kms_key_name" {
   description = "The resource name of the Cloud KMS CryptoKey to be used to protect access to messages published on this topic."
   default     = null
 }
+
+variable "extra_pubsub_iam_members" {
+  type        = list
+  description = "Extra iam binding members for the pull subscription"
+  default     = []
+}

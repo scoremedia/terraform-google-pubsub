@@ -21,6 +21,7 @@ data "google_project" "project" {
 locals {
   default_ack_deadline_seconds = 10
   pubsub_svc_account_email     = "service-${data.google_project.project.number}@gcp-sa-pubsub.iam.gserviceaccount.com"
+  extra_pubsub_iam_members     = concat(var.extra_pubsub_iam_members, ["serviceAccount:${local.pubsub_svc_account_email}"])
 }
 
 resource "google_pubsub_topic_iam_member" "push_topic_binding" {
@@ -50,9 +51,7 @@ resource "google_pubsub_subscription_iam_binding" "pull_subscription_binding" {
   project      = var.project_id
   subscription = var.pull_subscriptions[count.index].name
   role         = "roles/pubsub.subscriber"
-  members = [
-    "serviceAccount:${local.pubsub_svc_account_email}",
-  ]
+  members      = local.extra_pubsub_iam_members
   depends_on = [
     google_pubsub_subscription.pull_subscriptions,
   ]
